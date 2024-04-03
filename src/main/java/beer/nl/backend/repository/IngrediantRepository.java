@@ -11,7 +11,5 @@ import java.util.List;
 @Repository
 public interface IngrediantRepository extends JpaRepository<Ingrediant, Long> {
 
-    @Query("SELECT i FROM Ingrediant i WHERE i.id IN :ids")
-    List<Ingrediant> findByIds(@Param("ids") List<Long> ingredientIds);
 }
 

@@ -44,25 +44,21 @@ public class BeerServiceImpl implements BeerService {
         BeerProperty property = BeerProperty.valueOf(propertyName.toUpperCase());
         switch (property) {
             case ABV:
-                return beerRepository.findByAbv((Double) value);
+                return beerRepository.findByProperties((Double) value, null, null);
             case IBU:
-                return beerRepository.findByIbu((Integer) value);
+                return beerRepository.findByProperties(null, (Integer) value, null);
             case NAME:
-                return beerRepository.findByName((String) value);
+                return beerRepository.findByProperties(null, null, (String) value);
             default:
                 throw new IllegalArgumentException("Invalid property name: " + propertyName);
         }
     }
 
 
-
-
     @Override
     public Beer findBeerById(Long id) {
         return beerRepository.findById(id).orElse(null);
     }
-
-
 
     @Override
     public List<Long> findBeersByIngredientIds(List<Long> ingredientIds) {

@@ -1,12 +1,14 @@
 package beer.nl.backend.controller;
 
-
+import beer.nl.backend.helper.BeerProperty;
 import beer.nl.backend.model.Beer;
 import beer.nl.backend.service.BeerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,14 +56,25 @@ public class BeerController {
             @RequestParam(required = false) Double abv,
             @RequestParam(required = false) Integer ibu,
             @RequestParam(required = false) String name) {
-
-        SearchCriteria searchCriteria = SearchCriteria.determineSearchCriteria(abv, ibu, name);
-        if (searchCriteria != null) {
-            return beerService.findBeersByProperty(searchCriteria.getProperty(), searchCriteria.getValue());
-        } else {
-            return List.of();
+        for (BeerProperty property : BeerProperty.values()) {
+            Object value = getValueForProperty(property, abv, ibu, name);
+            if (value != null) {
+                List<Beer> beers = beerService.findBeersByProperty(property.name().toLowerCase(), value);
+                return ResponseEntity.ok(beers).getBody();
+            }
         }
+        return (List<Beer>) ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
+
+    private Object getValueForProperty(BeerProperty property, Object... values) {
+        for (Object value : values) {
+            if (value != null && BeerProperty.matchesProperty(property, value)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
     /**
      * Search beers based on ingredients
      */
