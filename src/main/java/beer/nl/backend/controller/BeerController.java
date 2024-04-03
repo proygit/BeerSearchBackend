@@ -1,6 +1,6 @@
 package beer.nl.backend.controller;
 
-import beer.nl.backend.helper.SearchCriteria;
+
 import beer.nl.backend.model.Beer;
 import beer.nl.backend.service.BeerService;
 import org.springframework.beans.factory.annotation.Autowired;
